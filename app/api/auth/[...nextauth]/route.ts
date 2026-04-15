@@ -34,8 +34,16 @@ export const authOptions = {
             throw new Error("L-Compte dyalk m-bloki. Dwi m3a l-Admin.");
           }
 
-          // 3. 9aren l-mot de passe l-mkhbi (bcrypt) m3a dakchi li dkhl l-user
-          const isValid = await bcrypt.compare(credentials.password, user.password);
+         // 3. 9aren l-mot de passe (L-Mokh l-jdid)
+          let isValid = false;
+
+          // Wach l-mot de passe m-crypté (bhal dyal l-admin l-qdim) wla 3adi (yallah t-zad)
+          if (user.password.startsWith("$2a$") || user.password.startsWith("$2b$")) {
+            isValid = await bcrypt.compare(credentials.password, user.password);
+          } else {
+            // Ila kan 3adi (Plain text)
+            isValid = credentials.password === user.password;
+          }
 
           if (!isValid) {
             throw new Error("Mot de passe ghalat!");
